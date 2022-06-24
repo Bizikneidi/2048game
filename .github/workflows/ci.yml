@@ -11,6 +11,8 @@ jobs:
     #   paths:
     #     - $maven_packages_cache
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
       - name: Compile
         run: mvn compile
       - name: Archive production artifacts
