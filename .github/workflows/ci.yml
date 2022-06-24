@@ -1,0 +1,79 @@
+on: workflow_dispatch
+
+env:
+  maven_packages_cache: ".m2/repository"
+  MAVEN_OPTS: "-Dmaven.repo.local=./$maven_packages_cache"
+
+jobs:
+  build:
+    runs-on: self-hosted
+    # cache:
+    #   paths:
+    #     - $maven_packages_cache
+    steps:
+      - name: Compile
+        run: mvn compile
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-without-markdown
+          path: target/*
+
+  # test:
+  #   runs-on: self-hosted
+  #   needs: [ build ]
+  #   artifacts:
+  #     name: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  #     expire_in: 1 week
+  #     paths:
+  #       - "target/site/jacoco/*"
+  #       - "target/surefire-reports/*"
+  #   cache:
+  #     paths:
+  #       - $maven_packages_cache
+  #   script:
+  #     - mvn test
+
+  # package:
+  #   runs-on: self-hosted
+  #   needs: [ test ]
+  #   artifacts:
+  #     name: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  #     expire_in: 1 week
+  #     paths:
+  #       - "target/*.war"
+  #   cache:
+  #     paths:
+  #       - $maven_packages_cache
+  #   script:
+  #     - mvn package
+
+  # deploy:
+  #   runs-on: self-hosted
+  #   needs: [ package ]
+  #   dependencies:
+  #     - package
+  #   when: manual
+  #   environment:
+  #     name: test
+  #     action: start
+  #     url: http://localhost:8080/game2048
+  #     on_stop: stop
+  #   script:
+  #     - docker rm --force game2048
+  #     - docker image rm --force game2048
+  #     - echo -e 'FROM tomcat:9-jdk17-openjdk-slim\nCOPY ./target/game2048.war /usr/local/tomcat/webapps' | docker build -t game2048 -f- .
+  #     - docker run --rm -d --name game2048 -p 8080:8080 game2048
+
+  # stop:
+  #   stage: deploy
+  #   tags:
+  #     - shell
+  #   when: manual
+  #   environment:
+  #     name: test
+  #     action: stop
+  #     url: http://localhost:8080/game2048
+  #   script:
+  #     - docker rm --force game2048
+  #     - docker image rm --force game2048
