@@ -22,11 +22,6 @@ jobs:
     steps:
       - name: Compile
         run: mvn compile
-      - name: Publish production artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: 2048-game-war
-          path: target/*
 
   test:
     runs-on: self-hosted
@@ -45,19 +40,17 @@ jobs:
           name: 2048-game-surefire
           path: target/surefire-reports/*
 
-  # package:
-  #   runs-on: self-hosted
-  #   needs: [ test ]
-  #   artifacts:
-  #     name: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
-  #     expire_in: 1 week
-  #     paths:
-  #       - "target/*.war"
-  #   cache:
-  #     paths:
-  #       - $maven_packages_cache
-  #   script:
-  #     - mvn package
+  package:
+    runs-on: self-hosted
+    needs: [ build ]
+    steps:
+      - name: Package
+        run: mvn package
+      - name: Publish war
+        uses: actions/upload-artifact@v3
+        with:
+          name: 2048-game-war
+          path: target/*.war
 
   # deploy:
   #   runs-on: self-hosted
