@@ -18,9 +18,7 @@ jobs:
 
   build:
     runs-on: self-hosted
-    # cache:
-    #   paths:
-    #     - $maven_packages_cache
+    needs: [ checkout ]
     steps:
       - name: Compile
         run: mvn compile
@@ -33,9 +31,6 @@ jobs:
   test:
     runs-on: self-hosted
     needs: [ build ]
-    # cache:
-    #   paths:
-    #     - $maven_packages_cache
     steps:
       - name: Run tests
         run: mvn test
