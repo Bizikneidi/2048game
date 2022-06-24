@@ -5,11 +5,8 @@ env:
   MAVEN_OPTS: "-Dmaven.repo.local=./$maven_packages_cache"
 
 jobs:
-  build:
+  checkout:
     runs-on: self-hosted
-    # cache:
-    #   paths:
-    #     - $maven_packages_cache
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -18,9 +15,16 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
           cache: 'maven'
+
+  build:
+    runs-on: self-hosted
+    # cache:
+    #   paths:
+    #     - $maven_packages_cache
+    steps:
       - name: Compile
         run: mvn compile
-      - name: Archive production artifacts
+      - name: Publish production artifacts
         uses: actions/upload-artifact@v3
         with:
           name: 2048-game-war
@@ -33,19 +37,14 @@ jobs:
     #   paths:
     #     - $maven_packages_cache
     steps:
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: '17'
-          cache: 'maven'
       - name: Run tests
         run: mvn test
-      - name: Archive test coverage results
+      - name: Publish test coverage results
         uses: actions/upload-artifact@v3
         with:
           name: 2048-game-jcoco
           path: target/site/jacoco/*
-      - name: Archive test report
+      - name: Publish test report
         uses: actions/upload-artifact@v3
         with:
           name: 2048-game-surefire
