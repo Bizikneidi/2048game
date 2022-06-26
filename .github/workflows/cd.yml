@@ -10,7 +10,7 @@ jobs:
       - name: Download war
         uses: actions/download-artifact@v3
         with:
-          name: my-artifact
+          name: 2048-game-war
           path: /usr/local/tomcat/webapps
 
   # deploy:
