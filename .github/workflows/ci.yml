@@ -57,7 +57,7 @@ jobs:
     needs: [ package, test ]
     environment:
       name: development
-      url: http://localhost:8080/game2048
+      url: http://localhost:8081/game2048
     steps:
       - name: Download war
         uses: actions/download-artifact@v3
