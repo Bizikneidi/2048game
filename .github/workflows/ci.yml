@@ -54,7 +54,7 @@ jobs:
 
   deploy:
     runs-on: self-hosted
-    needs: [ package ]
+    needs: [ package, test ]
     environment:
       name: development
       url: http://localhost:8080/game2048
