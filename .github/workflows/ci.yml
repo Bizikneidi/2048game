@@ -52,6 +52,18 @@ jobs:
           name: 2048-game-war
           path: target/*.war
 
+  deploy:
+    runs-on: self-hosted
+    environment:
+      name: development
+      url: http://localhost:8080/game2048
+    steps:
+      - name: Download war
+        uses: actions/download-artifact@v3
+        with:
+          name: 2048-game-war
+          path: /usr/local/tomcat/webapps
+
   # deploy:
   #   runs-on: self-hosted
   #   needs: [ package ]
